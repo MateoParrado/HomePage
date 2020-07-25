@@ -13,7 +13,11 @@ class SixersTab extends React.Component {
             lastTenLosses: 0,
             visitingLastTenWins: 0,
             visitingLastTenLosses: 0,
-            home: true
+            home: true,
+            wins: 0,
+            losses: 0,
+            position: 0,
+            gamesBehind: 0
         }
     }
 
@@ -26,6 +30,21 @@ class SixersTab extends React.Component {
             default:
                 return PHILogo;
         }
+    }
+
+    ordinal_suffix_of(i) {
+        var j = i % 10,
+            k = i % 100;
+        if (j == 1 && k != 11) {
+            return i + "st";
+        }
+        if (j == 2 && k != 12) {
+            return i + "nd";
+        }
+        if (j == 3 && k != 13) {
+            return i + "rd";
+        }
+        return i + "th";
     }
 
     dateFactory = (str) => {
@@ -141,44 +160,120 @@ class SixersTab extends React.Component {
             }
         }
 
+        this.calculateRanking();
+    }
+
+    //calculate the rankings of every team so we know where the sixers stand
+    async calculateRanking() {
+        //first we will calculate the wins and losses for the sixers, and use this to set the games won / lost div
+
+        let result = await axios("https://www.balldontlie.io/api/v1/games?seasons[]=2019&&per_page=100&&team_ids[]=23", {
+            headers: {
+                Accept: "application/json"
+            }
+        });
+
+        for (let i = 0; i < result.data.data.length; i++) {
+            if (result.data.data[i].status === "Final") {
+
+                //add one to either wins or losses depending
+                if (result.data.data[i].home_team.id === 23 && result.data.data[i].home_team_score > result.data.data[i].visitor_team_score) {
+                    this.setState({ wins: this.state.wins + 1 });
+                }
+                else if (result.data.data[i].home_team.id === 23 && result.data.data[i].home_team_score < result.data.data[i].visitor_team_score) {
+                    this.setState({ losses: this.state.losses + 1 });
+                }
+                else if (result.data.data[i].home_team_score > result.data.data[i].visitor_team_score) {
+                    this.setState({ losses: this.state.losses + 1 });
+                }
+                else {
+                    this.setState({ wins: this.state.wins + 1 });
+                }
+            }
+        }
+
+        //we will now loop through every team and calculate their number of wins and how many are above the sixers
+        let above = 0;
+        let maxWins = 0;
+
+        for(let j = 0; j < 32; j++){
+            //continue if its a western conf team or the sixers
+            if(j === 23 || j === 7 || j === 8 || j === 10 || j === 11 || j === 13 || j === 14 || j === 15 || j === 18 || 
+                j === 19 || j === 21 || j === 24 || j === 25 || j === 26 || j === 27 || j === 29){
+                continue;
+            }
+
+            let result = await axios(`https://www.balldontlie.io/api/v1/games?seasons[]=2019&&per_page=100&&team_ids[]=${j}`, {
+                headers: {
+                    Accept: "application/json"
+                }
+            });
+
+            let wins = 0;
+
+            for (let i = 0; i < result.data.data.length; i++) {
+                if (result.data.data[i].status === "Final") {
+    
+                    //add one to wins if they won
+                    if (result.data.data[i].home_team.id === j && result.data.data[i].home_team_score > result.data.data[i].visitor_team_score) {
+                        wins++;
+                    }
+                    else if(result.data.data[i].visitor_team.id === j && result.data.data[i].home_team_score < result.data.data[i].visitor_team_score){
+                        wins++;
+                    }
+                }
+            }
+
+            if(wins > this.state.wins){
+                above++;
+            }
+
+            if(wins > maxWins){
+                maxWins = wins;
+            }
+        }
+
+        this.setState({position: above+1, gamesBehind: this.state.wins - maxWins});
     }
 
     render() {
         return (this.state.game ? <div className="basketball-div">
             {this.state.home ?
                 <div className='logo-container'>
-                    <div className='ranking'>1st (-0)</div>
+                    <center className='ranking'>{this.ordinal_suffix_of(this.state.position)} ({this.state.gamesBehind})</center>
                     <img className="home-logo" src={PHILogo} />
-                    <div className="last-ten">({this.state.lastTenWins}-{this.state.lastTenLosses})</div>
+                    <center className="last-ten">({this.state.lastTenWins}-{this.state.lastTenLosses})</center>
                 </div>
                 :
                 <div className='logo-container'>
-                    <div className='ranking'>1st (-0)</div>
+                    <center className='ranking'>Bad</center>
                     <img className="home-logo" src={this.getImg(this.state.game.home_team.id)} />
-                    <div className="last-ten">({this.state.visitingLastTenWins}-{this.state.visitingLastTenLosses})</div>
+                    <center className="last-ten">({this.state.visitingLastTenWins}-{this.state.visitingLastTenLosses})</center>
                 </div>
             }
             <div>
-                <center>39-26</center>
-                <center className="score">{this.state.game.home_team_score}-{this.state.game.visitor_team_score
+                <center className="season-wins">{this.state.wins}-{this.state.losses}</center>
+                <center className="score">12{this.state.game.home_team_score}-10{this.state.game.visitor_team_score
                 }</center>
                 <div>
                     <center className="date-vs">
                         vs<br />
                         {this.dateFactory(this.state.game.date.slice(5, 10))}
+                        <br></br>
+                        {this.state.game.status}
                     </center></div>
             </div>
             {!this.state.home ?
                 <div className='logo-container'>
-                    <div className='ranking'>1st (-0)</div>
+                    <center className='ranking'>{this.ordinal_suffix_of(this.state.position)} ({this.state.gamesBehind})</center>
                     <img className="home-logo" src={PHILogo} />
-                    <div className="last-ten">({this.state.lastTenWins}-{this.state.lastTenLosses})</div>
+                    <center className="last-ten">({this.state.lastTenWins}-{this.state.lastTenLosses})</center>
                 </div>
                 :
                 <div className='logo-container'>
-                    <div className='ranking'>1st (-0)</div>
+                    <center className='ranking'>Bad</center>
                     <img className="home-logo" src={this.getImg(this.state.game.visitor_team.id)} />
-                    <div className="last-ten">({this.state.visitingLastTenWins}-{this.state.visitingLastTenLosses})</div>
+                    <center className="last-ten">({this.state.visitingLastTenWins}-{this.state.visitingLastTenLosses})</center>
                 </div>
             }
 

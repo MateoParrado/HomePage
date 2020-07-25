@@ -180,7 +180,7 @@ main {
 
 .ranking{
   color: rgba(30, 30, 30, .8);
-  font-size: 15px;
+  font-size: 13px;
   margin: 0 auto;
   width: 99%
 }
@@ -192,4 +192,9 @@ main {
 
 .score{
   font-size:18px;
+  font-weight: bold;
+}
+
+.season-wins{
+  padding-bottom: 10px;
 }
