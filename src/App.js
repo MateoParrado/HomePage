@@ -1,7 +1,8 @@
 import React, { useState, useEffect, Component } from 'react';
 import api from './apiKeys'
 import SixersTab from './sixers'
-import Weather from './Weather/weather'
+import BucksTab from './bucks'
+import Weather from './weather'
 
 class App extends Component {
 
@@ -16,7 +17,7 @@ class App extends Component {
         <div className="todo-div">
           <object type="text/html" height="100%" width="100%" data="https://priyapshah.github.io/toDoMultipleLists" object-fit="fill"></object>
         </div>
-        <SixersTab></SixersTab>
+        <SixersTab></SixersTab><BucksTab></BucksTab>
       </div>
     );
   }

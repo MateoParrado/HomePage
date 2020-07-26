@@ -2,8 +2,14 @@ import React from 'react'
 import axios from 'axios'
 import PHILogo from './assets/PHI.jpg'
 import CHALogo from './assets/CHA.jpg'
+import ATLLogo from './assets/ATL.jpg'
+import BKNLogo from './assets/BKN.jpg'
+import BOSLogo from './assets/BOS.jpg'
+import CHILogo from './assets/CHI.jpg'
+import CLELogo from './assets/CLE.jpg'
+import MILLogo from './assets/MIL.jpg'
 
-class SixersTab extends React.Component {
+class BucksTab extends React.Component {
     constructor() {
         super();
 
@@ -25,8 +31,20 @@ class SixersTab extends React.Component {
         switch (id) {
             case 23:
                 return PHILogo;
+            case 17:
+                return MILLogo;
             case 4:
                 return CHALogo;
+            case 3:
+                return BKNLogo;
+            case 1:
+                return ATLLogo;
+            case 2:
+                return BOSLogo;
+            case 5:
+                return CHILogo;
+            case 6:
+                return CLELogo;
             default:
                 return PHILogo;
         }
@@ -62,7 +80,7 @@ class SixersTab extends React.Component {
     }
 
     async componentDidMount() {
-        let result = await axios("https://www.balldontlie.io/api/v1/games?seasons[]=2019&&per_page=100&&team_ids[]=23", {
+        let result = await axios("https://www.balldontlie.io/api/v1/games?seasons[]=2019&&per_page=100&&team_ids[]=17", {
             headers: {
                 Accept: "application/json"
             }
@@ -80,7 +98,7 @@ class SixersTab extends React.Component {
         await this.setState({ game: result.data.data[0] });
 
 
-        if (this.state.game.home_team.id === 23) {
+        if (this.state.game.home_team.id === 17) {
             this.setState({ home: true });
         }
         else {
@@ -95,10 +113,10 @@ class SixersTab extends React.Component {
                 done++;
 
                 //add one to either wins or losses depending
-                if (result.data.data[i].home_team.id === 23 && result.data.data[i].home_team_score > result.data.data[i].visitor_team_score) {
+                if (result.data.data[i].home_team.id === 17 && result.data.data[i].home_team_score > result.data.data[i].visitor_team_score) {
                     this.setState({ lastTenWins: this.state.lastTenWins + 1 });
                 }
-                else if (result.data.data[i].home_team.id === 23 && result.data.data[i].home_team_score < result.data.data[i].visitor_team_score) {
+                else if (result.data.data[i].home_team.id === 17 && result.data.data[i].home_team_score < result.data.data[i].visitor_team_score) {
                     this.setState({ lastTenLosses: this.state.lastTenLosses + 1 });
                 }
                 else if (result.data.data[i].home_team_score > result.data.data[i].visitor_team_score) {
@@ -117,7 +135,7 @@ class SixersTab extends React.Component {
         }
 
         //do the same for the visitor
-        let otherId = this.state.game.visitor_team.id === 23 ? this.state.game.home_team.id : this.state.game.visitor_team.id;
+        let otherId = this.state.game.visitor_team.id === 17 ? this.state.game.home_team.id : this.state.game.visitor_team.id;
 
         result = await axios(`https://www.balldontlie.io/api/v1/games?seasons[]=2019&&per_page=100&&team_ids[]=${otherId}`, {
             headers: {
@@ -166,7 +184,7 @@ class SixersTab extends React.Component {
     async calculateRanking() {
         //first we will calculate the wins and losses for the sixers, and use this to set the games won / lost div
 
-        let result = await axios("https://www.balldontlie.io/api/v1/games?seasons[]=2019&&per_page=100&&team_ids[]=23", {
+        let result = await axios("https://www.balldontlie.io/api/v1/games?seasons[]=2019&&per_page=100&&team_ids[]=17", {
             headers: {
                 Accept: "application/json"
             }
@@ -176,10 +194,10 @@ class SixersTab extends React.Component {
             if (result.data.data[i].status === "Final") {
 
                 //add one to either wins or losses depending
-                if (result.data.data[i].home_team.id === 23 && result.data.data[i].home_team_score > result.data.data[i].visitor_team_score) {
+                if (result.data.data[i].home_team.id === 17 && result.data.data[i].home_team_score > result.data.data[i].visitor_team_score) {
                     this.setState({ wins: this.state.wins + 1 });
                 }
-                else if (result.data.data[i].home_team.id === 23 && result.data.data[i].home_team_score < result.data.data[i].visitor_team_score) {
+                else if (result.data.data[i].home_team.id === 17 && result.data.data[i].home_team_score < result.data.data[i].visitor_team_score) {
                     this.setState({ losses: this.state.losses + 1 });
                 }
                 else if (result.data.data[i].home_team_score > result.data.data[i].visitor_team_score) {
@@ -195,12 +213,12 @@ class SixersTab extends React.Component {
         let above = 0;
         let maxWins = 0;
 
-        for(let j = 0; j < 32; j++){
-            //continue if its a western conf team or the sixers
-            if(j === 23 || j === 7 || j === 8 || j === 10 || j === 11 || j === 13 || j === 14 || j === 15 || j === 18 || 
+        for (let j = 0; j < 32; j++) {
+            //continue if its a western conf team or the bucks
+            /*if(j === 17 || j === 7 || j === 8 || j === 10 || j === 11 || j === 13 || j === 14 || j === 15 || j === 18 || 
                 j === 19 || j === 21 || j === 24 || j === 25 || j === 26 || j === 27 || j === 29){
                 continue;
-            }
+            }*/
 
             let result = await axios(`https://www.balldontlie.io/api/v1/games?seasons[]=2019&&per_page=100&&team_ids[]=${j}`, {
                 headers: {
@@ -212,35 +230,39 @@ class SixersTab extends React.Component {
 
             for (let i = 0; i < result.data.data.length; i++) {
                 if (result.data.data[i].status === "Final") {
-    
+
                     //add one to wins if they won
                     if (result.data.data[i].home_team.id === j && result.data.data[i].home_team_score > result.data.data[i].visitor_team_score) {
                         wins++;
                     }
-                    else if(result.data.data[i].visitor_team.id === j && result.data.data[i].home_team_score < result.data.data[i].visitor_team_score){
+                    else if (result.data.data[i].visitor_team.id === j && result.data.data[i].home_team_score < result.data.data[i].visitor_team_score) {
                         wins++;
+                    }
+
+                    if (j == 1) {
+                        console.log(result.data.data[i].home_team.id + "  " + result.data.data[i].home_team.abbreviation);
                     }
                 }
             }
 
-            if(wins > this.state.wins){
+            if (wins > this.state.wins) {
                 above++;
             }
 
-            if(wins > maxWins){
+            if (wins > maxWins) {
                 maxWins = wins;
             }
         }
 
-        this.setState({position: above+1, gamesBehind: this.state.wins - maxWins});
+        this.setState({ position: above + 1, gamesBehind: this.state.wins - maxWins });
     }
 
     render() {
-        return (this.state.game ? <div className="basketball-div">
+        return (this.state.game ? <div className="bucks-basketball-div">
             {this.state.home ?
                 <div className='logo-container'>
                     <center className='ranking'>{this.ordinal_suffix_of(this.state.position)} ({this.state.gamesBehind})</center>
-                    <img className="home-logo" src={PHILogo} />
+                    <img className="home-logo" src={MILLogo} />
                     <center className="last-ten">({this.state.lastTenWins}-{this.state.lastTenLosses})</center>
                 </div>
                 :
@@ -265,7 +287,7 @@ class SixersTab extends React.Component {
             {!this.state.home ?
                 <div className='logo-container'>
                     <center className='ranking'>{this.ordinal_suffix_of(this.state.position)} ({this.state.gamesBehind})</center>
-                    <img className="home-logo" src={PHILogo} />
+                    <img className="home-logo" src={MILLogo} />
                     <center className="last-ten">({this.state.lastTenWins}-{this.state.lastTenLosses})</center>
                 </div>
                 :
@@ -280,4 +302,4 @@ class SixersTab extends React.Component {
     }
 }
 
-export default SixersTab;
+export default BucksTab;

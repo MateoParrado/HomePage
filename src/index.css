@@ -160,6 +160,15 @@ main {
   align-items: center;
 }
 
+.bucks-basketball-div{
+  grid-area: 3/1;
+  width: 12.5vw;
+  height: 12.5vh;
+  background-color: rgba(81, 122, 81, 0.7);
+  display: flex;
+  align-items: center;
+}
+
 .home-logo{
   width: 50px;
   height: 50px;

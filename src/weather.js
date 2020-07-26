@@ -1,14 +1,12 @@
 import React from 'react'
+import apiImport from './apiKeys'
 
 class Weather extends React.Component{
     
   constructor() {
     super();
     this.state = {
-      api: {
-        key: "23e7b873089790571f3f74802b542c8f",
-        base: "https://api.openweathermap.org/data/2.5/"
-      },
+      api: apiImport,
       query: '',
       weather: {}
     }
